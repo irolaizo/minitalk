@@ -10,27 +10,6 @@ El subject indica que podemos hacer uso de las siguientes funciones: `write`, `f
 
 ## Desarrollo del Server
 
-### Este será el `main` del servidor:
-
-```c
-int main (void)
-{
-    struct sigaction signal_action;
-    sigset_t         signal_set;
-
-    printf("This is your server PID: %d\n", getpid());
-    sigemptyset(&signal_set);
-    sigaddset(&signal_set, SIGUSR1);
-    sigaddset(&signal_set, SIGUSR2);
-    signal_action.sa_handler = signal_handler;
-    signal_action.sa_mask = signal_set;
-    signal_action.sa_flags = 0;
-    sigaction(SIGUSR1, &signal_action, NULL);
-    sigaction(SIGUSR2, &signal_action, NULL);
-    while (1)
-        pause();
-    return (0);
-}
 Este es el programa que recibirá los mensajes y los imprimirá en la terminal. Empezaremos por crear un main y comprender la función pause. Esta función tiene como objetivo pausar el programa hasta recibir una señal. Tendremos que ponerla en un bucle infinito while (1) porque no queremos que nuestras terminales dejen de comunicarse entre sí.
 Obtención del PID
 
@@ -56,3 +35,27 @@ sigaction(SIGUSR2, &signal_action, NULL);
 Preparación para el Cliente
 
 Al llegar a este punto, deberemos prestar atención al client. Este es el programa que enviará el mensaje para que el server lo reciba y lo imprima.
+
+### Este será el `main` del servidor:
+
+```c
+int main (void)
+{
+    struct sigaction signal_action;
+    sigset_t         signal_set;
+
+    printf("This is your server PID: %d\n", getpid());
+    sigemptyset(&signal_set);
+    sigaddset(&signal_set, SIGUSR1);
+    sigaddset(&signal_set, SIGUSR2);
+    signal_action.sa_handler = signal_handler;
+    signal_action.sa_mask = signal_set;
+    signal_action.sa_flags = 0;
+    sigaction(SIGUSR1, &signal_action, NULL);
+    sigaction(SIGUSR2, &signal_action, NULL);
+    while (1)
+        pause();
+    return (0);
+}
+
+
