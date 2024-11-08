@@ -40,46 +40,35 @@ int	ft_atoi(const char *str)
 	}
 	return (num * sign);
 }
-
-
-
 // Function to send each character bit by bit to the server
-void send_character(pid_t server_pid, char character)
+void send_message(pid_t server_pid, unsigned char *messege)
 {
-	int	i;
+	int i;
 
-	i = 0;
-	while (i < 8) {
-		if ((character >> i) & 1)
-			kill(server_pid, SIGUSR2); // Send SIGUSR2 for bit "1"
-		else
-			kill(server_pid, SIGUSR1); // Send SIGUSR1 for bit "0"
-		usleep(150); // Small delay to ensure the server has time to process the signal
-		usleep(150);
-		i ++;
+	while (*messege)
+	{
+		i = -1;
+		while (++i < 8)
+		{
+			if ((*messege >> i) & i)
+				kill (server_pid,SIGUSR2);
+			else
+				kill (server_pid, SIGUSR1);
+			usleep(50);
+			usleep(50);
+		}
+		messege ++;
 	}
-}
+	return (0);
 
 int main(int argc, char **argv)
 {
-	int	i;
-	i = 0;
+	int server_pid;
+	char *message;
 
-	if (argc != 3) {
-		write(2, "Usage: ./client [server_pid] [message]\n", 39);
-		return 1;
-	}
-
-	pid_t server_pid = ft_atoi(argv[1]);
-	char *message = argv[2];
-
-	// Send each character of the message to the server
-	i = 0;
-	while (message[i])
-		send_character(server_pid, message[i++]);
-	// Optionally, send a null character to signal the end of the message
-	send_character(server_pid, '\0');
-
-	return (0);
+	if (argc != 3)
+		return (write (2, "Usage: ./client [server_pid] [message]\n", 39), 1);
+	server_pid = ft_atoi(argv[1]);
+	message = argv[2];
+	return (send_message(server_pid, (unsigned char *)message));
 }
-
