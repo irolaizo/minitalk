@@ -6,7 +6,7 @@
 /*   By: irolaizo <irolaizo@student.42urduliz.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:03:36 by irolaizo          #+#    #+#             */
-/*   Updated: 2024/08/11 17:03:36 by irolaizo         ###   ########.fr       */
+/*   Updated: 2024/11/07 11:12:48 by irolaizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ volatile sig_atomic_t current_bit_index = 0;
 // Signal handler function
 void handle_signal(int signal)
 {
+	char c;
+
 	if (signal == SIGUSR2)
 		current_character |= (1 << current_bit_index);
 
@@ -28,9 +30,10 @@ void handle_signal(int signal)
 
 	if (current_bit_index == 8)
 	{
-		write(1, &current_character, 1);
+		c = (char)current_character;
+		write(1, &c, 1);
 		current_character = 0;
-		bit_position = 0;
+		current_bit_index = 0;
 	}
 }
 
