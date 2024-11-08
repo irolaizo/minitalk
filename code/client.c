@@ -6,7 +6,7 @@
 /*   By: irolaizo <irolaizo@student.42urduliz.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:03:44 by irolaizo          #+#    #+#             */
-/*   Updated: 2024/11/07 11:15:33 by irolaizo         ###   ########.fr       */
+/*   Updated: 2024/11/08 10:23:57 by irolaizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void send_character(pid_t server_pid, char character)
 			kill(server_pid, SIGUSR2); // Send SIGUSR2 for bit "1"
 		else
 			kill(server_pid, SIGUSR1); // Send SIGUSR1 for bit "0"
-		usleep(300); // Small delay to ensure the server has time to process the signal
+		usleep(50); // Small delay to ensure the server has time to process the signal
+		usleep(50);
 	}
 }
 
