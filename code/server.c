@@ -6,46 +6,55 @@
 /*   By: irolaizo <irolaizo@student.42urduliz.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:03:36 by irolaizo          #+#    #+#             */
-/*   Updated: 2024/11/08 10:41:35 by irolaizo         ###   ########.fr       */
+/*   Updated: 2024/11/09 16:48:49 by irolaizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include <stdio.h>
 #include <signal.h>
+#include <stdlib.h>
+#include "libft/libft.h"
+#include "ft_printf/ft_printf.h"
 
-int bit;
-
-// Signal handler function
-static void	get_signal(int signal)
+void	signal_received(int signal)
 {
+	static	size_t	i = 0;
+	static	size_t byte = 0;
+
 	if (signal == SIGUSR1)
-		bit = 0;
+		byte = byte << 1;
 	else if (signal == SIGUSR2)
-		bit = 1;
+		byte = (byte << 1) | 1;
+	i++;
+	if (i == 8)
+	{
+		ft_printf("%c", (char)byte);
+		i = 0;
+		byte = 0;
+	}
 }
 
-void handle_signal()
+int	main(int ac, char **av)
 {
-	int				i;
-	unsigned char	c;
+	pid_t	pid;
 
-	i = 0;
-	while(i < 8)
+	if (ac != 1 || av[1])
+	{
+		ft_printf("Please dont put any argument\n");
+		return (1);
+	}
+	pid = getpid();
+	if (pid == -1)
+	{
+		ft_printf("Error getting pid\n");
+		return (1);
+	}
+	ft_printf("pid: %d\n", pid);
+	signal(SIGUSR1, signal_received);
+	signal(SIGUSR2, signal_received);
+	while (1)
 	{
 		pause();
-		c |= (bit << i);
-		i ++;
 	}
-	write(1, &c, 1);
-
-int main(void)
-{
-	printf("Server PID: %d\n", getpid());
-
-	signal(SIGUSR1, get_signal);
-	signal(SIGUSR2, get_signal);
-
-	while (1)
-		handle_signal();
+	return (0);
 }

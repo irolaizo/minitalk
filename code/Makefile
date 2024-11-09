@@ -10,28 +10,43 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME_SERVER = server
-NAME_CLIENT = client
+CC						= cc
+NAME 					= minitalk
+NAME_CLIENT				= client
+NAME_SERVER				= server
+CFLAGS					= -Wall -Wextra -Werror
+LDFLAGS					= -L./libft -lft -L./ft_printf -lftprintf
+SRC_CLIENT 				= client.c
+SRC_SERVER 				= server.c
 
-CC = gcc
-CFLAGS = -Wall -Werror -Wextra
+${NAME}: all
 
-SRC_SERVER = code/server.c
-SRC_CLIENT = code/client.c
+all:
+	make -C ./libft
+	make -C ./ft_printf
+	make ${NAME_CLIENT}
+	make ${NAME_SERVER}
 
-all: $(NAME_SERVER) $(NAME_CLIENT)
+${NAME_CLIENT}: ${SRC_CLIENT}
+	${echo "client"}
+	${CC} ${CFLAGS} ${SRC_CLIENT} -o ${NAME_CLIENT} ${LDFLAGS}
 
-$(NAME_SERVER):
-	$(CC) $(CFLAGS) $(SRC_SERVER) -o $(NAME_SERVER)
-
-$(NAME_CLIENT):
-	$(CC) $(CFLAGS) $(SRC_CLIENT) -o $(NAME_CLIENT)
+${NAME_SERVER}: ${SRC_SERVER}
+	${echo  "server"}
+	${CC} ${CFLAGS} ${SRC_SERVER} -o ${NAME_SERVER} ${LDFLAGS}
 
 clean:
+	rm -rf *.o
+	rm -rf tags
+	make -C libft clean
 
-fclean: clean
-	rm -f $(NAME_SERVER) $(NAME_CLIENT)
+fclean:
+	make clean
+	rm -rf ${NAME_SERVER} ${NAME_CLIENT}
+	make -C libft fclean
 
-re: fclean all
+re:
+	make fclean
+	make all
 
 .PHONY: all clean fclean re
